@@ -1,0 +1,36 @@
+{
+  "name": "mypackage",
+  "version": "1.0.2",
+  "description": "Node SDK for NuvyraHub on-chain AI model marketplace — list models, acquire licenses, read listings",
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./abi": "./src/abi.js"
+  },
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "node -e \"console.log('mypackage is JavaScript; no compile step')\""
+  },
+  "keywords": [
+    "nuvyra",
+    "marketplace",
+    "ethereum",
+    "ethers",
+    "ai-models",
+    "nft",
+    "license"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "ethers": "^6.13.5"
+  },
+  "peerDependencies": {
+    "ethers": "^6.0.0"
+  }
+}

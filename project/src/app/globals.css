@@ -1,0 +1,111 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #06070b;
+  --bg-elevated: #0d0f16;
+  --bg-panel: #141724;
+  --border: #1f2433;
+  --border-strong: #2a3145;
+  --text: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+  --accent: #8b5cf6;
+  --accent-soft: #a78bfa;
+  --accent-deep: #7c3aed;
+  --success: #10b981;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --glow: rgba(139, 92, 246, 0.35);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-bg-panel: var(--bg-panel);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-text: var(--text);
+  --color-text-muted: var(--text-muted);
+  --color-text-dim: var(--text-dim);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-deep: var(--accent-deep);
+  --color-success: var(--success);
+  --color-danger: var(--danger);
+  --color-warning: var(--warning);
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Archivo", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--accent) 40%, transparent);
+  color: white;
+}
+
+.grid-bg {
+  background-image:
+    linear-gradient(rgba(167, 139, 250, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(167, 139, 250, 0.06) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+.hero-glow {
+  background:
+    radial-gradient(ellipse 70% 50% at 70% 40%, rgba(139, 92, 246, 0.28), transparent 60%),
+    radial-gradient(ellipse 50% 40% at 20% 70%, rgba(16, 185, 129, 0.08), transparent 55%),
+    linear-gradient(180deg, #06070b 0%, #0a0c14 100%);
+}
+
+.fade-up {
+  animation: fadeUp 0.7s ease both;
+}
+
+.fade-up-delay {
+  animation: fadeUp 0.8s ease 0.12s both;
+}
+
+.fade-up-delay-2 {
+  animation: fadeUp 0.9s ease 0.24s both;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulseGlow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.45);
+  }
+  50% {
+    box-shadow: 0 0 28px 4px rgba(139, 92, 246, 0.25);
+  }
+}
+
+.btn-glow:hover {
+  animation: pulseGlow 1.6s ease infinite;
+}

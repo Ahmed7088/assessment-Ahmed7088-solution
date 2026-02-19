@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img">
+  <rect width="800" height="600" fill="#0d0f16"/>
+  <circle cx="400" cy="230" r="90" fill="#8b5cf6"/>
+  <rect x="250" y="340" width="300" height="180" rx="90" fill="#1f2433"/>
+  <text x="400" y="560" text-anchor="middle" fill="#a78bfa" font-family="Segoe UI, sans-serif" font-size="22">CREATOR NODE</text>
+</svg>

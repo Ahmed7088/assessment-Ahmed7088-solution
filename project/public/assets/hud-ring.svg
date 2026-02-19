@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" role="img">
+  <rect width="800" height="400" fill="#0d0f16"/>
+  <circle cx="400" cy="200" r="140" fill="none" stroke="#8b5cf6" stroke-width="8"/>
+  <circle cx="400" cy="200" r="100" fill="none" stroke="#22d3ee" stroke-width="3" opacity="0.8"/>
+  <circle cx="400" cy="200" r="60" fill="none" stroke="#10b981" stroke-width="2"/>
+  <text x="400" y="206" text-anchor="middle" fill="#f8fafc" font-family="Segoe UI, sans-serif" font-size="18">ZK NODE</text>
+</svg>

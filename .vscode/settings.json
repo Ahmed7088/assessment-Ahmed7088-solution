@@ -1,0 +1,49 @@
+{
+  "files.autoSave": "off",
+  "editor.minimap.enabled": false,
+  "editor.wordWrap": "off",
+  "files.exclude": {
+    "**/.DS_Store": true,
+    "**/.vscode": true,
+    "**/node_modules": true
+  },
+  "editor.tabSize": 2,
+  "editor.formatOnSave": false,
+  "terminal.integrated.profiles.windows": {
+    "GitHub CLI": {
+      "path": "C:\\Program Files\\Git\\bin\\bash.exe"
+    },
+    "PowerShell": {
+      "path": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+    }
+  },
+  "terminal.integrated.defaultProfile.windows": "Command Prompt",
+  "terminal.integrated.profiles.linux": {
+    "GitHub CLI": {
+      "path": "/usr/bin/gh"
+    },
+    "Default Shell": {
+      "path": "/bin/bash"
+    }
+  },
+  "terminal.integrated.profiles.osx": {
+    "GitHub CLI": {
+      "path": "/usr/local/bin/gh"
+    },
+    "Default Shell": {
+      "path": "/bin/zsh"
+    }
+  },
+  "terminal.integrated.defaultProfile.linux": "GitHub CLI",
+  "terminal.integrated.defaultProfile.osx": "GitHub CLI",
+  "terminal.integrated.defaultProfileCondition": {
+    "profiles": {
+      "GitHub CLI": "exists(/usr/bin/gh) || exists(/usr/local/bin/gh) || exists(C:\\Program Files\\Git\\bin\\bash.exe)"
+    },
+    "fallbacks": {
+      "windows": "PowerShell",
+      "linux": "Default Shell",
+      "osx": "Default Shell"
+    }
+  }
+}

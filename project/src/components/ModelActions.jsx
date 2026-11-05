@@ -32,9 +32,7 @@ export function ModelActions({ slug }) {
   const [listing, setListing] = useState(null);
   const [listingState, setListingState] = useState("loading");
   const [listingError, setListingError] = useState(null);
-  const [walletAvailable] = useState(() =>
-    typeof window === "undefined" ? null : Boolean(window.ethereum),
-  );
+  const [walletAvailable, setWalletAvailable] = useState(null);
   const [walletAddress, setWalletAddress] = useState(null);
   const [walletChainId, setWalletChainId] = useState(null);
   const [licenseBalance, setLicenseBalance] = useState(null);
@@ -66,8 +64,11 @@ export function ModelActions({ slug }) {
 
   useEffect(() => {
     if (!window.ethereum) {
+      Promise.resolve().then(() => setWalletAvailable(false));
       return undefined;
     }
+
+    Promise.resolve().then(() => setWalletAvailable(true));
 
     const refreshWalletState = async () => {
       try {

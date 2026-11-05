@@ -63,8 +63,8 @@ export default async function ModelDetailPage({ params }) {
     <>
       <SiteHeader variant="app" />
       <main className="mx-auto w-full max-w-[1440px] px-6 py-10 md:px-20">
-        <div className="grid gap-10 lg:grid-cols-[1.4fr_0.8fr]">
-          <div>
+        <div className="grid min-w-0 gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,0.8fr)]">
+          <div className="min-w-0">
             <Link
               href={marketplaceHref({ category: model.categorySlug })}
               className="font-[family-name:JetBrains_Mono] text-[12px] tracking-[0.14em] text-accent-soft transition hover:text-accent"
@@ -129,7 +129,7 @@ prediction = model.generate(
             </div>
           </div>
 
-          <aside className="space-y-5">
+          <aside className="min-w-0 space-y-5">
             <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-border">
               <Image
                 src={model.image}

@@ -49,12 +49,12 @@ export function SiteHeader({ variant = "marketing" }) {
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/80 bg-bg/80 backdrop-blur-xl">
-      <div className="mx-auto flex h-[77px] w-full max-w-[1440px] items-center justify-between px-6 md:px-20">
-        <Link href="/" className="flex items-center gap-3">
+      <div className="mx-auto flex min-h-[77px] w-full max-w-[1440px] items-center justify-between gap-3 px-4 py-3 sm:px-6 md:px-20">
+        <Link href="/" className="flex min-w-0 items-center gap-2 sm:gap-3">
           <span className="flex h-8 w-8 items-center justify-center rounded-md bg-accent/20 ring-1 ring-accent-soft/40">
             <span className="h-2.5 w-2.5 rounded-sm bg-accent-soft" />
           </span>
-          <span className="font-[family-name:Archivo] text-[22px] font-extrabold tracking-tight text-text">
+          <span className="truncate font-[family-name:Archivo] text-[18px] font-extrabold tracking-tight text-text sm:text-[22px]">
             NuvyraHub
           </span>
         </Link>
@@ -93,14 +93,14 @@ export function SiteHeader({ variant = "marketing" }) {
             <button
               type="button"
               onClick={onConnectWallet}
-              className="flex items-center gap-3 rounded-md border border-border bg-bg-elevated px-3 py-2"
+              className="flex shrink-0 items-center gap-2 rounded-md border border-border bg-bg-elevated px-2 py-2 sm:gap-3 sm:px-3"
             >
               <span className="h-2 w-2 rounded-full bg-success shadow-[0_0_8px_#10b981]" />
               <div className="leading-tight text-left">
-                <p className="font-[family-name:JetBrains_Mono] text-[10px] tracking-wider text-success">
+                <p className="hidden font-[family-name:JetBrains_Mono] text-[10px] tracking-wider text-success sm:block">
                   CONNECTED
                 </p>
-                <p className="font-[family-name:JetBrains_Mono] text-[12px] text-text-muted hover:text-text">
+                <p className="font-[family-name:JetBrains_Mono] text-[10px] text-text-muted hover:text-text sm:text-[12px]">
                   {walletLabel || "0x9df4...32ac"}
                 </p>
               </div>

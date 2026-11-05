@@ -1,6 +1,11 @@
 "use client";
 
-import { BrowserProvider, Contract, formatEther } from "ethers";
+import {
+  BrowserProvider,
+  Contract,
+  JsonRpcProvider,
+  formatEther,
+} from "ethers";
 import marketplaceAbi from "@/abi/NuvyraHubMarketplace.json";
 
 const CHAIN_ID = Number(process.env.NEXT_PUBLIC_CHAIN_ID || 31337);
@@ -13,33 +18,64 @@ export function getMarketplaceAddress() {
   return MARKETPLACE;
 }
 
-export async function connectBrowserWallet() {
+export function getExpectedChainId() {
+  return CHAIN_ID;
+}
+
+export function getExpectedChainName() {
+  return CHAIN_ID === 31337 ? "Hardhat Local" : `chain ${CHAIN_ID}`;
+}
+
+export function formatWalletError(error, fallback = "Wallet request failed") {
+  const code = error?.code;
+  const message = String(error?.shortMessage || error?.message || "").toLowerCase();
+
+  if (code === 4001 || code === "ACTION_REJECTED" || message.includes("user rejected")) {
+    return "The wallet request was cancelled.";
+  }
+  if (code === "INSUFFICIENT_FUNDS" || message.includes("insufficient funds")) {
+    return "This wallet does not have enough ETH to pay for the license and gas.";
+  }
+  if (code === "CALL_EXCEPTION") {
+    return "The contract rejected the purchase. Check the listing and wallet network.";
+  }
+  if (message.includes("network") || message.includes("chain")) {
+    return "The wallet is on the wrong network.";
+  }
+  return error instanceof Error ? error.message : fallback;
+}
+
+export async function connectBrowserWallet({ autoSwitch = true } = {}) {
   if (!window.ethereum) {
-    throw new Error("No wallet found. Install MetaMask or use relay acquire.");
+    throw new Error("No wallet found. Install MetaMask to continue.");
   }
 
   const provider = new BrowserProvider(window.ethereum);
   await provider.send("eth_requestAccounts", []);
 
-  try {
-    await window.ethereum.request({
-      method: "wallet_switchEthereumChain",
-      params: [{ chainId: `0x${CHAIN_ID.toString(16)}` }],
-    });
-  } catch (err) {
-    const code = err?.code;
-    if (code === 4902) {
+  if (autoSwitch) {
+    try {
       await window.ethereum.request({
-        method: "wallet_addEthereumChain",
-        params: [
-          {
-            chainId: `0x${CHAIN_ID.toString(16)}`,
-            chainName: "Hardhat Local",
-            rpcUrls: [RPC_URL],
-            nativeCurrency: { name: "ETH", symbol: "ETH", decimals: 18 },
-          },
-        ],
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: `0x${CHAIN_ID.toString(16)}` }],
       });
+    } catch (err) {
+      const code = err?.code;
+      if (code === 4902) {
+        await window.ethereum.request({
+          method: "wallet_addEthereumChain",
+          params: [
+            {
+              chainId: `0x${CHAIN_ID.toString(16)}`,
+              chainName: "Hardhat Local",
+              rpcUrls: [RPC_URL],
+              nativeCurrency: { name: "ETH", symbol: "ETH", decimals: 18 },
+            },
+          ],
+        });
+      } else {
+        throw err;
+      }
     }
   }
 
@@ -50,26 +86,58 @@ export async function connectBrowserWallet() {
 }
 
 export async function getMarketplaceContract(signerOrProvider) {
-  const provider = signerOrProvider || new BrowserProvider(window.ethereum);
-  const runner = "getSigner" in provider ? await provider.getSigner() : provider;
+  const runner =
+    signerOrProvider ||
+    (window.ethereum ? new BrowserProvider(window.ethereum) : new JsonRpcProvider(RPC_URL));
   return new Contract(MARKETPLACE, marketplaceAbi.abi, runner);
+}
+
+export async function readListingForSlug(slug, provider = new JsonRpcProvider(RPC_URL)) {
+  const market = new Contract(MARKETPLACE, marketplaceAbi.abi, provider);
+  const tokenId = await market.getTokenIdBySlug(slug);
+
+  if (tokenId === 0n) {
+    throw new Error("Model is not listed on-chain yet.");
+  }
+
+  const listing = await market.getListing(tokenId);
+  return {
+    tokenId: Number(tokenId),
+    tokenIdRaw: tokenId,
+    priceWei: listing.priceWei,
+    priceEth: formatEther(listing.priceWei),
+    active: listing.active,
+    totalLicensesSold: Number(listing.totalLicensesSold),
+  };
+}
+
+export async function submitLicensePurchase(slug, signer) {
+  const listing = await readListingForSlug(slug, signer.provider);
+  const market = new Contract(MARKETPLACE, marketplaceAbi.abi, signer);
+  const tx = await market.acquireLicense(listing.tokenIdRaw, {
+    value: listing.priceWei,
+  });
+
+  return { tx, ...listing };
+}
+
+export async function getLicenseBalance(address, tokenId, provider) {
+  const market = new Contract(
+    MARKETPLACE,
+    marketplaceAbi.abi,
+    provider || new JsonRpcProvider(RPC_URL),
+  );
+  return market.balanceOf(address, tokenId);
 }
 
 export async function acquireLicenseWithWallet(slug) {
   const { signer, address } = await connectBrowserWallet();
-  const market = new Contract(MARKETPLACE, marketplaceAbi.abi, signer);
-  const tokenId = await market.getTokenIdBySlug(slug);
-  if (tokenId === BigInt(0)) {
-    throw new Error("Model is not listed on-chain yet");
-  }
-  const listing = await market.getListing(tokenId);
-  const tx = await market.acquireLicense(tokenId, { value: listing.priceWei });
+  const { tx, ...listing } = await submitLicensePurchase(slug, signer);
   const receipt = await tx.wait();
   return {
     txHash: receipt?.hash || tx.hash,
     buyer: address,
-    tokenId: Number(tokenId),
-    priceEth: formatEther(listing.priceWei),
+    ...listing,
   };
 }
 
@@ -77,7 +145,7 @@ export async function listModelWithWallet(input) {
   const { signer, address } = await connectBrowserWallet();
   const market = new Contract(MARKETPLACE, marketplaceAbi.abi, signer);
   const existing = await market.getTokenIdBySlug(input.slug);
-  if (existing !== BigInt(0)) {
+  if (existing !== 0n) {
     return {
       txHash: null,
       creator: address,
